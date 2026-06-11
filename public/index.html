@@ -1,1 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coverage Pay Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F6F5;
+    --card:#FFFFFF;
+    --ink:#16211E;
+    --ink-soft:#566461;
+    --line:#E0E4E1;
+    --green:#1F6F54;       /* money / earnings */
+    --green-soft:#EAF3EF;
+    --slate:#2E5C6E;       /* coverage pay stream */
+    --slate-soft:#EAF1F3;
+    --amber:#9A6A12;
+    --amber-soft:#FBF1DC;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 64px;}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;}
 
+  /* Header */
+  header.head{margin-bottom:24px;}
+  .eyebrow{
+    font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--green);margin:0 0 6px;
+  }
+  h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;}
+  .sub{color:var(--ink-soft);font-size:15px;margin:0;max-width:60ch;}
+
+  /* Hero result */
+  .hero{
+    background:var(--ink);color:#fff;border-radius:14px;
+    padding:24px 26px;margin:22px 0 26px;
+    box-shadow:0 12px 30px -16px rgba(22,33,30,.5);
+  }
+  .hero-label{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:#9DB3AC;margin:0 0 4px;}
+  .hero-amt{font-size:46px;font-weight:600;letter-spacing:-.02em;line-height:1;}
+  .hero-amt .dollar{color:#6FBF9C;font-size:30px;vertical-align:6px;margin-right:2px;}
+  .hero-note{font-size:13px;color:#9DB3AC;margin:10px 0 0;}
+  .hero-split{display:flex;gap:22px;margin-top:18px;flex-wrap:wrap;}
+  .hero-chip{flex:1 1 160px;border-top:2px solid rgba(255,255,255,.16);padding-top:8px;}
+  .hero-chip .k{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#9DB3AC;}
+  .hero-chip .v{font-size:20px;font-weight:500;margin-top:2px;}
+  .hero-chip.cov .v{color:#8FC6DA;}
+  .hero-chip.bon .v{color:#7FCFAA;}
+
+  /* Cards */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:680px){.grid{grid-template-columns:1fr;}}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 20px 22px;
+  }
+  .card-tag{display:flex;align-items:center;gap:8px;margin:0 0 14px;}
+  .dot{width:9px;height:9px;border-radius:50%;}
+  .dot.cov{background:var(--slate);}
+  .dot.bon{background:var(--green);}
+  .card-tag h2{font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em;}
+  .card-tag .hint{font-size:12px;color:var(--ink-soft);margin-left:auto;}
+
+  label{display:block;font-size:13px;font-weight:500;color:var(--ink-soft);margin:0 0 5px;}
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  input[type=number]{
+    width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;
+    font-size:15px;font-family:'IBM Plex Mono',monospace;color:var(--ink);background:#fff;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input[type=number]:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft);}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end;margin-bottom:14px;}
+  .two .field{margin-bottom:0;}
+
+  /* Salary mode toggle */
+  .seg{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:3px;margin-bottom:14px;}
+  .seg button{
+    border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:500;
+    padding:6px 12px;border-radius:6px;cursor:pointer;color:var(--ink-soft);
+  }
+  .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600;}
+
+  .readout{
+    margin-top:14px;padding:12px 14px;border-radius:8px;font-size:13px;
+    background:var(--slate-soft);color:var(--slate);
+  }
+  .readout.bonus{background:var(--green-soft);color:var(--green);}
+  .readout .big{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;}
+  .readout .ln{display:flex;justify-content:space-between;gap:10px;}
+  .readout .ln + .ln{margin-top:4px;}
+
+  .flag{
+    margin-top:12px;padding:10px 12px;border-radius:8px;font-size:12.5px;
+    background:var(--amber-soft);color:var(--amber);display:none;
+  }
+  .flag.show{display:block;}
+
+  /* Ledger breakdown */
+  .ledger{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-top:18px;}
+  .ledger h2{font-size:15px;font-weight:600;margin:0 0 12px;}
+  .row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px;}
+  .row:last-of-type{border-bottom:0;}
+  .row .lbl{color:var(--ink-soft);}
+  .row .amt{font-family:'IBM Plex Mono',monospace;font-weight:500;font-variant-numeric:tabular-nums;}
+  .row.total{border-top:2px solid var(--ink);margin-top:6px;padding-top:12px;border-bottom:0;}
+  .row.total .lbl{color:var(--ink);font-weight:600;}
+  .row.total .amt{font-weight:600;font-size:16px;color:var(--green);}
+  .row.sub .lbl{padding-left:14px;font-size:13px;}
+  .annual{font-size:12.5px;color:var(--ink-soft);margin-top:12px;}
+  .effrate{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--green-soft);}
+  .effrate .lbl{color:var(--green);font-weight:600;font-size:14px;}
+  .effrate .amt{color:var(--green);font-weight:600;font-size:18px;}
+
+  /* Policy */
+  details.policy{margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);}
+  details.policy summary{cursor:pointer;padding:14px 18px;font-weight:600;font-size:14px;list-style:none;}
+  details.policy summary::-webkit-details-marker{display:none;}
+  details.policy summary::after{content:'+';float:right;color:var(--ink-soft);font-weight:400;}
+  details.policy[open] summary::after{content:'–';}
+  .policy-body{padding:0 18px 18px;font-size:13px;color:var(--ink-soft);}
+  .policy-body ul{margin:0;padding-left:18px;}
+  .policy-body li{margin:6px 0;}
+  .reset{background:none;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;margin-top:18px;}
+  .reset:hover{border-color:var(--ink-soft);}
+  .foot{font-size:11.5px;color:var(--ink-soft);margin-top:20px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <p class="eyebrow">Cypress Health Partners</p>
+    <h1>Coverage Pay Calculator</h1>
+    <p class="sub">For exempt Physical Therapists salaried at 40 hours per week. Estimate what you'd earn by picking up approved coverage — including bonus on the visits you complete during that time.</p>
+  </header>
+
+  <section class="hero" aria-live="polite">
+    <p class="hero-label">Estimated extra earnings · this week</p>
+    <div class="hero-amt"><span class="dollar">$</span><span id="heroTotal">0</span></div>
+    <p class="hero-note" id="heroNote">Enter your details below to see your potential.</p>
+    <div class="hero-split">
+      <div class="hero-chip cov"><div class="k">Coverage pay</div><div class="v mono" id="chipCov">$0</div></div>
+      <div class="hero-chip bon"><div class="k">Added bonus</div><div class="v mono" id="chipBon">$0</div></div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <!-- COVERAGE PAY -->
+    <div class="card">
+      <div class="card-tag"><span class="dot cov"></span><h2>Coverage Pay</h2><span class="hint">paid for extra hours</span></div>
+
+      <div class="seg" role="tablist">
+        <button id="modeSalary" class="on" type="button">Annual salary</button>
+        <button id="modeHourly" type="button">Hourly equivalent</button>
+      </div>
+
+      <div class="field" id="fieldSalary">
+        <label for="salary">Your annual salary</label>
+        <input type="number" id="salary" value="85000" min="0" step="1000">
+      </div>
+      <div class="field" id="fieldHourly" style="display:none;">
+        <label for="hourly">Your hourly rate equivalent</label>
+        <input type="number" id="hourly" value="40.87" min="0" step="0.5">
+      </div>
+
+      <div class="field">
+        <label for="covHrsWeek">Coverage hours per week</label>
+        <input type="number" id="covHrsWeek" value="6" min="0" step="0.5">
+      </div>
+
+      <div class="readout">
+        <div class="ln"><span>Coverage rate</span><span class="big" id="covRate">$0.00/hr</span></div>
+        <div class="ln"><span id="covRateBasis">—</span><span class="mono" id="covHoursTotal">0 hrs</span></div>
+      </div>
+      <div class="flag" id="covFlag">Reminder: each coverage day must be at least <strong>2 hours</strong> to qualify. Days under 2 hours can be removed during payroll review.</div>
+    </div>
+
+    <!-- BONUS -->
+    <div class="card">
+      <div class="card-tag"><span class="dot bon"></span><h2>Visit Bonus</h2><span class="hint">60-visit threshold</span></div>
+
+      <div class="field">
+        <label for="avgUnits">Average units per visit</label>
+        <input type="number" id="avgUnits" value="3.5" min="0" step="0.1">
+      </div>
+
+      <label style="margin-top:2px;">Your typical week (no coverage)</label>
+      <div class="two">
+        <div class="field">
+          <label for="regTotal" style="font-weight:400;font-size:12px;">Total visits</label>
+          <input type="number" id="regTotal" value="56" min="0" step="1">
+        </div>
+        <div class="field">
+          <label for="regEvals" style="font-weight:400;font-size:12px;"># of visits that were evaluations</label>
+          <input type="number" id="regEvals" value="4" min="0" step="1">
+        </div>
+      </div>
+
+      <label style="margin-top:4px;">During coverage time</label>
+      <div class="two">
+        <div class="field">
+          <label for="covTotal" style="font-weight:400;font-size:12px;">Total visits</label>
+          <input type="number" id="covTotal" value="14" min="0" step="1">
+        </div>
+        <div class="field">
+          <label for="covEvals" style="font-weight:400;font-size:12px;"># of visits that were evaluations</label>
+          <input type="number" id="covEvals" value="2" min="0" step="1">
+        </div>
+      </div>
+
+      <div class="readout bonus">
+        <div class="ln"><span>Weighted visits w/ coverage</span><span class="big" id="weightedTotal">0</span></div>
+        <div class="ln"><span>Over 60 threshold</span><span class="mono" id="overThreshold">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEDGER -->
+  <div class="ledger">
+    <h2>This week's breakdown</h2>
+    <div class="row">
+      <span class="lbl">Coverage pay <span class="mono" id="ledCovDetail" style="font-size:12px;color:var(--ink-soft);"></span></span>
+      <span class="amt" id="ledCov">$0.00</span>
+    </div>
+    <div class="row">
+      <span class="lbl">Bonus from coverage visits</span>
+      <span class="amt" id="ledBon">$0.00</span>
+    </div>
+    <div class="row sub">
+      <span class="lbl">Total bonus with coverage</span>
+      <span class="amt" id="ledBonWith" style="color:var(--ink-soft);">$0.00</span>
+    </div>
+    <div class="row sub">
+      <span class="lbl">Bonus without coverage</span>
+      <span class="amt" id="ledBonWithout" style="color:var(--ink-soft);">$0.00</span>
+    </div>
+    <div class="row total">
+      <span class="lbl">Total extra earnings this week</span>
+      <span class="amt mono" id="ledTotal">$0.00</span>
+    </div>
+    <div class="effrate">
+      <span class="lbl">Effective rate per coverage hour <span style="font-weight:400;font-size:12px;opacity:.8;">incl. bonus</span></span>
+      <span class="amt mono" id="ledEffective">—</span>
+    </div>
+    <p class="annual" id="annualNote"></p>
+  </div>
+
+  <details class="policy">
+    <summary>How this is calculated &amp; policy reminders</summary>
+    <div class="policy-body">
+      <ul>
+        <li><strong>Eligibility:</strong> Coverage Pay applies only to exempt Physical Therapists salaried at 40 hours per week. Non-exempt, hourly clinicians are paid for all hours worked per their timecard instead.</li>
+        <li><strong>Coverage rate:</strong> the greater of 1.2× your hourly rate equivalent or $42/hour. Hourly equivalent is annual salary ÷ 2,080 hours (40 hrs/week × 52 weeks).</li>
+        <li><strong>2-hour minimum:</strong> you must work at least 2 additional hours on a given day for that day to qualify. Anything under 2 hours can be removed during payroll review.</li>
+        <li><strong>Prior approval required:</strong> coverage must be requested and approved by your CM/MP <em>before</em> the time is worked. Late patients or last-minute add-ons to your regular day are not coverage and count toward weekly productivity.</li>
+        <li><strong>Bonus:</strong> weighted visits above 60 earn a bonus, where each evaluation counts as 2 visits. Bonus = (weighted visits over 60) × average units per visit × $5. This tool shows the <em>added</em> bonus your coverage visits generate, on top of where your regular week already lands.</li>
+      </ul>
+    </div>
+  </details>
+
+  <button class="reset" id="resetBtn" type="button">Reset to defaults</button>
+  <p class="foot">Estimate only. Actual pay and bonus are subject to manager approval, payroll review, and current company policy.</p>
+</div>
+
+<script>
+(function(){
+  var FLOOR = 42, MULT = 1.2, ANNUAL_HOURS = 2080, THRESHOLD = 60, EVAL_WEIGHT = 2, RATE_PER_UNIT = 5;
+  var mode = 'salary';
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var num = function(id){ var v = parseFloat($(id).value); return isNaN(v) || v < 0 ? 0 : v; };
+  var fmt = function(n){ return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); };
+  var fmt0 = function(n){ return '$' + Math.round(n).toLocaleString('en-US'); };
+
+  // ---- count-up animation for hero ----
+  var heroEl = $('heroTotal'), heroCur = 0, raf;
+  function animateHero(target){
+    if(prefersReduced){ heroEl.textContent = Math.round(target).toLocaleString('en-US'); heroCur = target; return; }
+    cancelAnimationFrame(raf);
+    var start = heroCur, t0 = null, dur = 450;
+    function step(ts){
+      if(!t0) t0 = ts;
+      var p = Math.min((ts - t0)/dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = start + (target - start) * eased;
+      heroEl.textContent = Math.round(val).toLocaleString('en-US');
+      if(p < 1) raf = requestAnimationFrame(step); else heroCur = target;
+    }
+    raf = requestAnimationFrame(step);
+  }
+
+  function setMode(m){
+    mode = m;
+    $('modeSalary').classList.toggle('on', m==='salary');
+    $('modeHourly').classList.toggle('on', m==='hourly');
+    $('fieldSalary').style.display = m==='salary' ? 'block':'none';
+    $('fieldHourly').style.display = m==='hourly' ? 'block':'none';
+    calc();
+  }
+
+  function calc(){
+    // --- coverage rate ---
+    var hourlyEquiv = mode==='salary' ? num('salary')/ANNUAL_HOURS : num('hourly');
+    var byMult = MULT * hourlyEquiv;
+    var rate = Math.max(byMult, FLOOR);
+    var basis = byMult >= FLOOR
+      ? '1.2 × ' + fmt(hourlyEquiv) + ' equiv.'
+      : '$42 floor applies';
+
+    // --- coverage hours per week ---
+    var covHours = num('covHrsWeek');
+    $('covFlag').classList.toggle('show', covHours > 0);
+
+    var coveragePay = covHours * rate;
+
+    $('covRate').textContent = fmt(rate) + '/hr';
+    $('covRateBasis').textContent = basis;
+    $('covHoursTotal').textContent = covHours + ' hrs';
+
+    // --- bonus (incremental) ---
+    // Total visits already include evaluations; each eval counts as 2, so it
+    // adds one extra on top of being counted once in the total.
+    var avgUnits = num('avgUnits');
+    var regTotal = num('regTotal'), regEvals = Math.min(num('regEvals'), regTotal);
+    var covTotal = num('covTotal'), covEvals = Math.min(num('covEvals'), covTotal);
+    var wReg = regTotal + regEvals;
+    var wCov = covTotal + covEvals;
+    var wTotal = wReg + wCov;
+
+    var overTotal = Math.max(0, wTotal - THRESHOLD);
+    var overReg   = Math.max(0, wReg - THRESHOLD);
+
+    var bonusWith    = overTotal * avgUnits * RATE_PER_UNIT;
+    var bonusWithout = overReg   * avgUnits * RATE_PER_UNIT;
+    var bonusAdded   = bonusWith - bonusWithout;
+
+    $('weightedTotal').textContent = wTotal;
+    $('overThreshold').textContent = overTotal;
+
+    // --- totals ---
+    var total = coveragePay + bonusAdded;
+
+    $('chipCov').textContent = fmt0(coveragePay);
+    $('chipBon').textContent = fmt0(bonusAdded);
+    animateHero(total);
+
+    $('heroNote').textContent = covHours > 0
+      ? covHours + ' coverage hrs @ ' + fmt(rate) + '/hr + ' + Math.round(wCov) + ' weighted coverage visits'
+      : 'Add qualifying coverage hours to see your earnings.';
+
+    $('ledCov').textContent = fmt(coveragePay);
+    $('ledCovDetail').textContent = covHours > 0 ? '(' + covHours + ' hrs × ' + fmt(rate) + ')' : '';
+    $('ledBon').textContent = fmt(bonusAdded);
+    $('ledBonWith').textContent = fmt(bonusWith);
+    $('ledBonWithout').textContent = fmt(bonusWithout);
+    $('ledTotal').textContent = fmt(total);
+
+    var effRate = covHours > 0 ? total / covHours : 0;
+    $('ledEffective').textContent = covHours > 0 ? fmt(effRate) + '/hr' : '—';
+
+    $('annualNote').textContent = total > 0
+      ? 'If you did this every week of the year, that\u2019s about ' + fmt0(total * 52) + ' in additional earnings.'
+      : '';
+  }
+
+  // listeners
+  ['salary','hourly','covHrsWeek','avgUnits','regTotal','regEvals','covTotal','covEvals']
+    .forEach(function(id){ $(id).addEventListener('input', calc); });
+  $('modeSalary').addEventListener('click', function(){ setMode('salary'); });
+  $('modeHourly').addEventListener('click', function(){ setMode('hourly'); });
+
+  var defaults = {salary:85000,hourly:40.87,covHrsWeek:6,avgUnits:3.5,regTotal:56,regEvals:4,covTotal:14,covEvals:2};
+  $('resetBtn').addEventListener('click', function(){
+    Object.keys(defaults).forEach(function(k){ $(k).value = defaults[k]; });
+    setMode('salary');
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
