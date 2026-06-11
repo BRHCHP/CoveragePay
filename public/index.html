@@ -179,7 +179,7 @@
 
       <div class="field">
         <label for="covHrsWeek">Coverage hours per week</label>
-        <input type="number" id="covHrsWeek" value="6" min="0" step="0.5">
+        <input type="number" id="covHrsWeek" value="4" min="0" step="0.5">
       </div>
 
       <div class="readout">
@@ -214,11 +214,11 @@
       <div class="two">
         <div class="field">
           <label for="covTotal" style="font-weight:400;font-size:12px;">Total visits</label>
-          <input type="number" id="covTotal" value="14" min="0" step="1">
+          <input type="number" id="covTotal" value="7" min="0" step="1">
         </div>
         <div class="field">
           <label for="covEvals" style="font-weight:400;font-size:12px;"># of visits that were evaluations</label>
-          <input type="number" id="covEvals" value="2" min="0" step="1">
+          <input type="number" id="covEvals" value="1" min="0" step="1">
         </div>
       </div>
 
@@ -384,7 +384,7 @@
   $('modeSalary').addEventListener('click', function(){ setMode('salary'); });
   $('modeHourly').addEventListener('click', function(){ setMode('hourly'); });
 
-  var defaults = {salary:85000,hourly:40.87,covHrsWeek:6,avgUnits:3.5,regTotal:56,regEvals:4,covTotal:14,covEvals:2};
+  var defaults = {salary:85000,hourly:40.87,covHrsWeek:4,avgUnits:3.5,regTotal:56,regEvals:4,covTotal:7,covEvals:1};
   $('resetBtn').addEventListener('click', function(){
     Object.keys(defaults).forEach(function(k){ $(k).value = defaults[k]; });
     setMode('salary');
