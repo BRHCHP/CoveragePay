@@ -138,6 +138,14 @@
   .reset{background:none;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;margin-top:18px;}
   .reset:hover{border-color:var(--ink-soft);}
   .foot{font-size:11.5px;color:var(--ink-soft);margin-top:20px;text-align:center;}
+
+  .policy-doc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 12px;margin-top:18px;}
+  .policy-doc > h2{font-size:16px;font-weight:700;margin:0 0 2px;letter-spacing:-.01em;}
+  .policy-doc .src{font-size:11.5px;color:var(--ink-soft);margin:0 0 16px;}
+  .policy-doc h3{font-size:13.5px;font-weight:600;color:var(--green);margin:18px 0 6px;}
+  .policy-doc p{font-size:13px;color:var(--ink);opacity:.9;margin:0 0 10px;line-height:1.6;}
+  .policy-doc ol{font-size:13px;color:var(--ink);opacity:.9;margin:0 0 10px;padding-left:20px;line-height:1.6;}
+  .policy-doc li{margin:6px 0;}
 </style>
 </head>
 <body>
@@ -180,6 +188,7 @@
       <div class="field">
         <label for="covHrsWeek">Coverage hours per week</label>
         <input type="number" id="covHrsWeek" value="4" min="0" step="0.5">
+        <p style="font-size:11.5px;color:var(--ink-soft);margin:6px 0 0;line-height:1.4;">Hours worked <strong>beyond</strong> your full 40-hour week. You must complete your 40 hours to be eligible.</p>
       </div>
 
       <div class="readout">
@@ -264,6 +273,7 @@
     <div class="policy-body">
       <ul>
         <li><strong>Eligibility:</strong> Coverage Pay applies only to exempt Physical Therapists salaried at 40 hours per week. Non-exempt, hourly clinicians are paid for all hours worked per their timecard instead.</li>
+        <li><strong>Work your 40 first:</strong> Coverage Pay applies only to qualifying time worked <em>beyond</em> a completed 40-hour work week. You must work your full 40 hours to be eligible — coverage is additive, not a backfill for missed regular hours.</li>
         <li><strong>Coverage rate:</strong> the greater of 1.2× your hourly rate equivalent or $42/hour. Hourly equivalent is annual salary ÷ 2,080 hours (40 hrs/week × 52 weeks).</li>
         <li><strong>2-hour minimum:</strong> you must work at least 2 additional hours on a given day for that day to qualify. Anything under 2 hours can be removed during payroll review.</li>
         <li><strong>Prior approval required:</strong> coverage must be requested and approved by your CM/MP <em>before</em> the time is worked. Late patients or last-minute add-ons to your regular day are not coverage and count toward weekly productivity.</li>
@@ -271,6 +281,30 @@
       </ul>
     </div>
   </details>
+
+  <section class="policy-doc">
+    <h2>Coverage Pay Policy</h2>
+    <p class="src">Official policy — for reference.</p>
+
+    <h3>Coverage Pay</h3>
+    <p>Coverage Pay may be added to a timecard for exempt, salaried Physical Therapists who meet any of the defined Coverage Pay Criteria outside of their normal 40-hour work week. The clinician must work their full 40-hour work week to be eligible; Coverage Pay applies only to qualifying time worked beyond those 40 hours. To qualify as eligible paid time under Coverage Pay, the clinician must work a minimum of two (2) additional hours per day. Coverage pay is calculated as the greater of 1.2 times the clinicians' current hourly rate equivalent or $42/hour.</p>
+    <p>Any clinician who is non-exempt, hourly, is not eligible for Coverage Pay but rather will be paid for all hours worked according to their timecard, including overtime if applicable.</p>
+
+    <h3>Coverage Pay Criteria</h3>
+    <p>Coverage Pay may only be applied to a clinician's timecard if the time worked meets any of the following criteria:</p>
+    <ol>
+      <li>Working a minimum of two additional hours to help complete patient care for a co-worker who has taken PTO or is otherwise out of the office on their regular day.</li>
+      <li>Adding additional days to the clinician's regular set schedule for patient care.</li>
+      <li>Working on Saturday, when it occurs outside of the clinician's normal 40-hour work week.</li>
+    </ol>
+
+    <h3>Coverage Pay Exclusions</h3>
+    <p>Coverage Pay may not be added to the clinician's timecard to add additional hours to the clinician's regularly scheduled day for a late patient, last-minute add-on, or any reason other than those listed above. This type of additional worked time will be accounted for in the weekly productivity number for the clinician.</p>
+
+    <h3>Coverage Pay Approval and Review</h3>
+    <p>The clinician must provide the CM/MP prior notice of the anticipated/requested Coverage Pay, and it must be approved before the time can be completed. This will ensure proper utilization of Coverage Pay in compliance with the Coverage Pay Criteria versus the exclusion examples above.</p>
+    <p>Managers are required to review timecards prior to approving them each pay period and must ensure any coverage pay on timecards was previously approved and meets the Coverage Pay Criteria. Any Coverage Pay on timecards that is less than 2 hours does not qualify under the Coverage Pay Criteria and will be removed by the Payroll Manager during a review of the payroll reports without notice to the employee.</p>
+  </section>
 
   <button class="reset" id="resetBtn" type="button">Reset to defaults</button>
   <p class="foot">Estimate only. Actual pay and bonus are subject to manager approval, payroll review, and current company policy.</p>
