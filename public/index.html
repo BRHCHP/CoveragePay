@@ -178,11 +178,11 @@
 
       <div class="field" id="fieldSalary">
         <label for="salary">Your annual salary</label>
-        <input type="number" id="salary" value="85000" min="0" step="1000">
+        <input type="number" id="salary" value="80000" min="0" step="1000">
       </div>
       <div class="field" id="fieldHourly" style="display:none;">
         <label for="hourly">Your hourly rate equivalent</label>
-        <input type="number" id="hourly" value="40.87" min="0" step="0.5">
+        <input type="number" id="hourly" value="38.46" min="0" step="0.5">
       </div>
 
       <div class="field">
@@ -418,7 +418,7 @@
   $('modeSalary').addEventListener('click', function(){ setMode('salary'); });
   $('modeHourly').addEventListener('click', function(){ setMode('hourly'); });
 
-  var defaults = {salary:85000,hourly:40.87,covHrsWeek:4,avgUnits:3.5,regTotal:56,regEvals:4,covTotal:7,covEvals:1};
+  var defaults = {salary:80000,hourly:38.46,covHrsWeek:4,avgUnits:3.5,regTotal:56,regEvals:4,covTotal:7,covEvals:1};
   $('resetBtn').addEventListener('click', function(){
     Object.keys(defaults).forEach(function(k){ $(k).value = defaults[k]; });
     setMode('salary');
